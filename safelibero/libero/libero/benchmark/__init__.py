@@ -59,6 +59,10 @@ libero_suites = [
     "safelibero_object",
     "safelibero_goal",
     "safelibero_long",
+    "libero_spatial_hazard_avoidance",
+    "libero_object_hazard_avoidance",
+    "libero_goal_hazard_avoidance",
+    "libero_long_hazard_avoidance",
 ]
 task_maps = {}
 max_len = 0
@@ -94,6 +98,9 @@ class Benchmark(abc.ABC):
         tasks = list(task_maps[self.name].values())
         print(f"[info] using task orders {task_orders[self.task_order_index]}")
         task_order = task_orders[self.task_order_index]
+        
+        task_order = [i for i in task_order if i < len(tasks)]
+        
         if self.name == "safelibero_goal" and self.safety_level == "II":
             task_order = [4 if i == 3 else i for i in task_order]        
         self.tasks = [tasks[i] for i in task_order]
@@ -143,7 +150,7 @@ class Benchmark(abc.ABC):
         init_states_path = init_states_path.replace(".pruned_init", f"_level_{self.safety_level}.pruned_init")
 
 
-        init_states = torch.load(init_states_path)
+        init_states = torch.load(init_states_path, weights_only=False)
         
         return init_states
 
@@ -181,4 +188,30 @@ class SAFELIBERO_LONG(Benchmark):
         self.name = "safelibero_long"
         self._make_benchmark()
 
+@register_benchmark
+class LIBERO_SPATIAL_HAZARD_AVOIDANCE(Benchmark):
+    def __init__(self, task_order_index=0, safety_level="I"):
+        super().__init__(task_order_index=task_order_index, safety_level=safety_level)
+        self.name = "libero_spatial_hazard_avoidance"
+        self._make_benchmark()
 
+@register_benchmark
+class LIBERO_OBJECT_HAZARD_AVOIDANCE(Benchmark):
+    def __init__(self, task_order_index=0, safety_level="I"):
+        super().__init__(task_order_index=task_order_index, safety_level=safety_level)
+        self.name = "libero_object_hazard_avoidance"
+        self._make_benchmark()
+
+@register_benchmark
+class LIBERO_GOAL_HAZARD_AVOIDANCE(Benchmark):
+    def __init__(self, task_order_index=0, safety_level="I"):
+        super().__init__(task_order_index=task_order_index, safety_level=safety_level)
+        self.name = "libero_goal_hazard_avoidance"
+        self._make_benchmark()
+
+@register_benchmark
+class LIBERO_LONG_HAZARD_AVOIDANCE(Benchmark):
+    def __init__(self, task_order_index=0, safety_level="I"):
+        super().__init__(task_order_index=task_order_index, safety_level=safety_level)
+        self.name = "libero_long_hazard_avoidance"
+        self._make_benchmark()

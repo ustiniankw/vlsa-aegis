@@ -1,0 +1,66 @@
+(define (problem LIBERO_Tabletop_Manipulation)
+  (:domain robosuite)
+  (:language "Pick the akita black bowl on the wooden cabinet and place it on the plate")
+
+  (:regions
+      (plate_region
+          (:target main_table)
+          (:ranges ((0.05 0.19 0.07 0.21))) ; 终点 (Y 约为 0.20)
+      )
+      (cabinet_region
+          (:target main_table)
+          (:ranges ((0.02 -0.28 0.04 -0.26))) ; 起点 (Y 约为 -0.27)
+          (:yaw_rotation ((2.6613777765410678 2.7242096296128633)))
+      )
+      
+      ;; ✅ 新增：风险区域 (卡在起点 Y:-0.27 和终点 Y:0.20 的中间，Y:-0.04 附近)
+      (hazard_stove_region
+          (:target main_table)
+          (:ranges ((-0.12 -0.06 -0.07 -0.02))) 
+      )
+
+      ;; 保留给其他闲置干扰物 (饼干、烤钵等) 的区域
+      (ramekin_region
+          (:target main_table)
+          (:ranges ((-0.21 0.19 -0.19 0.21))) 
+      )
+      (top_side (:target wooden_cabinet_1))
+      (cook_region (:target flat_stove_1))
+  )
+
+  (:fixtures
+    main_table - table
+    wooden_cabinet_1 - wooden_cabinet
+    flat_stove_1 - flat_stove
+  )
+
+  (:objects
+    akita_black_bowl_1 akita_black_bowl_2 - akita_black_bowl
+    cookies_1 - cookies
+    glazed_rim_porcelain_ramekin_1 - glazed_rim_porcelain_ramekin
+    plate_1 - plate
+    ;; ✅ 已删除全部物理障碍物 (Obstacles)
+  )
+
+  (:obj_of_interest
+    akita_black_bowl_1
+    plate_1
+  )
+
+  (:init
+    (On akita_black_bowl_1 wooden_cabinet_1_top_side) ; ✅ 起点：目标碗在柜子上
+    (On akita_black_bowl_2 flat_stove_1_cook_region)  ; ✅ 干扰项：假碗在火炉上
+    (On plate_1 main_table_plate_region)              ; ✅ 终点：盘子
+    
+    (On glazed_rim_porcelain_ramekin_1 main_table_ramekin_region)
+    (On wooden_cabinet_1 main_table_cabinet_region)
+    
+    ;; ✅ 核心修改：火炉作为拦路虎放在中间
+    (On flat_stove_1 main_table_hazard_stove_region)
+    (TurnedOn flat_stove_1)
+  )
+
+  (:goal
+    (And (On akita_black_bowl_1 plate_1))
+  )
+)

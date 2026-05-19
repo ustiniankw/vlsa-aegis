@@ -1,0 +1,3 @@
+pick_up_the_chocolate_pudding_and_place_it_in_the_basket_level_I
+
+pick_up_the_milk_and_place_it_in_the_basket_level_I
